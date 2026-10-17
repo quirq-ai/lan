@@ -1,0 +1,45 @@
+# lan server stack: Headscale (control + DERP relay) + lan-server, behind Caddy (TLS).
+# Setup: see deploy/README.md
+services:
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    environment:
+      HS_DOMAIN: ${HS_DOMAIN}
+      LAN_DOMAIN: ${LAN_DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+
+  headscale:
+    image: headscale/headscale:0.29.5
+    restart: unless-stopped
+    command: serve
+    ports: ["3478:3478/udp"]          # STUN for the embedded DERP relay
+    environment:
+      HEADSCALE_SERVER_URL: https://${HS_DOMAIN}
+      HEADSCALE_DERP_SERVER_IPV4: ${PUBLIC_IPV4}
+    volumes:
+      - ./headscale/config.yaml:/etc/headscale/config.yaml:ro
+      - headscale-data:/var/lib/headscale
+      - headscale-run:/var/run/headscale
+
+  lan-server:
+    build: ../server
+    restart: unless-stopped
+    depends_on: [headscale]
+    environment:
+      HEADSCALE_URL: http://headscale:8080
+      HEADSCALE_API_KEY: ${HEADSCALE_API_KEY}
+      LAN_CONTROL_URL: https://${HS_DOMAIN}
+      CLERK_ISSUER: ${CLERK_ISSUER}
+      CLERK_OAUTH_CLIENT_ID: ${CLERK_OAUTH_CLIENT_ID}
+    volumes:
+      - lan-data:/data
+
+volumes:
+  caddy-data:
+  headscale-data:
+  headscale-run:
+  lan-data:

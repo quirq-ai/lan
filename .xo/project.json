@@ -1,0 +1,9 @@
+{
+  "schema": 2,
+  "pid": "3ed3b6dd-8196-4eea-8089-3835a8e0c834",
+  "name": "lan",
+  "owner_user_id": "suraj",
+  "created_at": "2026-10-17T20:21:59Z",
+  "display_name": "lan",
+  "description": "Private developer networks: share a local port or folder peer-to-peer over Headscale + tsnet, Clerk identity."
+}

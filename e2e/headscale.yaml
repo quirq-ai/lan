@@ -1,0 +1,31 @@
+# Local Headscale for the e2e test. __DIR__ is replaced by run.sh.
+server_url: http://127.0.0.1:18080
+listen_addr: 127.0.0.1:18080
+metrics_listen_addr: 127.0.0.1:19090
+grpc_listen_addr: 127.0.0.1:50443
+noise:
+  private_key_path: __DIR__/noise_private.key
+prefixes:
+  v4: 100.64.0.0/10
+  v6: fd7a:115c:a1e0::/48
+  allocation: sequential
+derp:
+  server:
+    enabled: false
+  urls:
+    - https://controlplane.tailscale.com/derpmap/default
+  auto_update_enabled: false
+database:
+  type: sqlite
+  sqlite:
+    path: __DIR__/db.sqlite
+policy:
+  mode: database
+dns:
+  magic_dns: true
+  base_domain: lan.internal
+  override_local_dns: false
+unix_socket: __DIR__/headscale.sock
+unix_socket_permission: "0770"
+log:
+  level: warn

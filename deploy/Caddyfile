@@ -1,0 +1,7 @@
+{$HS_DOMAIN} {
+	reverse_proxy headscale:8080
+}
+
+{$LAN_DOMAIN} {
+	reverse_proxy lan-server:8443
+}
